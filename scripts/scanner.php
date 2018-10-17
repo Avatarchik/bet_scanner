@@ -6,8 +6,15 @@ require('scripts/modules/Tools.php');
 require('scripts/modules/Errors.php'); 
 
 class Scanner {
+	function __construct() {
+		$this->http = new HTTP();
+	}
+	
 	public function Run() {
-		print(TEST_CONST . "\n");
+		$params = []; 
+		$content = $this->http->GetContent($params);
+		print_r($content);
+		print("\nOK\n");
 	}
 }
 
