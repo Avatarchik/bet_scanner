@@ -1,6 +1,6 @@
 @echo off
 chcp 65001
 
-php scripts/main.php
+php scripts/scanner.php
 
 Pause
