@@ -40,6 +40,7 @@ class Scanner {
 			
 		
 		print_r($data);
+		// print(getcwd() . "\n");
 		print("\nOK\n");
 	}
 }

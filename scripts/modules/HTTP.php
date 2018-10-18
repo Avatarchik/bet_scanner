@@ -20,6 +20,10 @@ class HTTP {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120); // таймаут соединения
 		curl_setopt($ch, CURLOPT_TIMEOUT, 120);        // таймаут ответа
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);       // останавливаться после 10-ого редиректа
+		//SSL
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_CAINFO, 'cert/cacert.pem');
 
 		$content = curl_exec($ch);
 		$errno = curl_errno($ch);
