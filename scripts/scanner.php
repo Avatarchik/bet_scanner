@@ -23,7 +23,8 @@ class Scanner {
 				$params = [
 					'url' => $link['url'],
 					'method' => $link['method'],
-					'body' => $link['body']
+					'body' => $link['body'],
+					'content_type' => $link['content_type']
 				];
 				$content = $this->http->GetContent($params);
 				$site_data[] = [

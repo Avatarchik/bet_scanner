@@ -8,7 +8,8 @@ const BET_SITES = '{
 					"type": "line",
 					"url": "https:\/\/line12.bkfon-resource.ru\/line\/currentLine\/ru\/",
 					"method": "GET",
-					"body": []
+					"body": [],
+					"content_type": "json"
 				}
 			]
 		}
