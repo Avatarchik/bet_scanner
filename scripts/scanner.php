@@ -11,9 +11,34 @@ class Scanner {
 	}
 	
 	public function Run() {
-		$params = []; 
-		$content = $this->http->GetContent($params);
-		print_r($content);
+		$data = [];
+		$bet_sites = json_decode(BET_SITES, true);
+		$providers = $bet_sites['providers'];
+		foreach ($providers as $provider) {
+			$name = $provider['name'];
+			$links = $provider['links'];
+			$site_data = [];
+			foreach ($links as $link) {
+				$link_type = $link['type'];
+				$params = [
+					'url' => $link['url'],
+					'method' => $link['method'],
+					'body' => $link['body']
+				];
+				$content = $this->http->GetContent($params);
+				$site_data[] = [
+					$link_type => [
+						'content' => $content
+					]  
+				];
+			}
+			$data[] = [
+				$name => $site_data
+			];
+		}
+			
+		
+		print_r($data);
 		print("\nOK\n");
 	}
 }
