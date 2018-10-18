@@ -23,7 +23,7 @@ class HTTP {
 		//SSL
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_CAINFO, 'cert/cacert.pem');
+		curl_setopt($ch, CURLOPT_CAINFO, 'cert/curl-ca-bundle.crt');
 
 		$content = curl_exec($ch);
 		$errno = curl_errno($ch);
@@ -40,7 +40,7 @@ class HTTP {
 		$data['info'] = $info;
 		$data['errno'] = $errno;
 		$data['errmsg'] = $errmsg;
-		$data['content'] = $content;
+		// $data['content'] = $content;
 		
 		return $data;
 	}
