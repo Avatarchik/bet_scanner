@@ -1,6 +1,19 @@
 <?php
 class HTTP {
-	public function GetContent($params){
+	private function Request($params) {
+		$response = [
+		
+		];
+		
+		foreach ($params as $param) {
+			print_r($param);
+			
+		}
+		
+		return $response;
+	}
+	
+	public function GetContent($params) { 
 		$data = [];
 		$url = $params['url'];
 		$method = $params['method'];
@@ -9,8 +22,22 @@ class HTTP {
 		
 		
 		$uagent = "Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.14";
+		
+		$params[] = ['key' => CURLOPT_RETURNTRANSFER,'value' => 1];
+		$params[] = ['key' => CURLOPT_HEADER,'value' => 0];
+		$params[] = ['key' => CURLOPT_FOLLOWLOCATION,'value' => 1];
+		$params[] = ['key' => CURLOPT_ENCODING,'value' => ''];
+		$params[] = ['key' => CURLOPT_USERAGENT,'value' => $uagent];
+		$params[] = ['key' => CURLOPT_CONNECTTIMEOUT,'value' => 120];
+		$params[] = ['key' => CURLOPT_TIMEOUT,'value' => 120];
+		$params[] = ['key' => CURLOPT_MAXREDIRS,'value' => 120];
+		$params[] = ['key' => CURLOPT_SSL_VERIFYPEER,'value' => true];
+		$params[] = ['key' => CURLOPT_SSL_VERIFYHOST,'value' => 2];
+		$params[] = ['key' => CURLOPT_CAINFO,'value' => 'cert/curl-ca-bundle.crt'];
+		
+		$this->Request($params);
 
-		$ch = curl_init($url);
+		/*$ch = curl_init($url);
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);   // возвращает веб-страницу
 		curl_setopt($ch, CURLOPT_HEADER, 0);           // не возвращает заголовки
@@ -40,7 +67,7 @@ class HTTP {
 		$data['info'] = $info;
 		$data['errno'] = $errno;
 		$data['errmsg'] = $errmsg;
-		// $data['content'] = $content;
+		// $data['content'] = $content;*/
 		
 		return $data;
 	}
