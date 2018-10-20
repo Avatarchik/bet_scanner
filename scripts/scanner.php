@@ -46,33 +46,7 @@ class Scanner {
 		print("\nOK\n");
 	}
 
-
-public function test($arr) {
-	//	$this->db->connect_db($params);
-	$line = '';
-	$line = $this->tools->tree_plaine($arr, $line);
-	return $line;
-
-	}
 }
 
 $scanner = new Scanner();
-
-$params = [
-
-	'host' => '127.0.0.1',
-	'db' => 'testdb',
-	'usr' => 'root',
-	'pass' => 'root',
-	'charset' => 'utf8'
-];
-$arr = [
-	'one' => [
-		'one_one' => '1',
-		'one_two' => '2',
-	],
-	'three' => '3'
-];
-$scanner->test($arr);
-
-//$scanner->Run();
+$scanner->Run();

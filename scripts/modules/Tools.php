@@ -1,28 +1,25 @@
 <?php
 class Tools {
-
-public function tree_plaine($arr, $line){
-	if (is_array($arr)) {
-		foreach ($arr as $key => $value) {
-			$line .= '[' . $key . ']' ;
-		  $this->tree_plaine($arr[$key], $line);
-		//	$this->tree_plaine($arr[$key], $line);
-		$line = '';
-		}
-
-
-	} else {
-			print($line . $arr[0] ."\n");
-			return $line;
-
+	function __construct() {
+		$this->buff = [];
 	}
-
- //print_r ($arr);
-
-
-
-
-
-}
+	
+	public function TreeToPlain($tree, &$output){
+		if (is_array($tree)) {
+			$mem = $this->buff;
+			foreach ($tree as $key => $value) {
+				$this->buff = $mem;
+				$this->buff[] = $key;
+				$this->TreeToPlain($tree[$key], $output);
+			}
+			$this->buff = $mem;
+		} else {
+			$output[] = [
+				'tags' => $this->buff,
+				'value' => $tree[0]
+			];
+			return null;
+		}
+	}
 
 }
