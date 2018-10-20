@@ -1,21 +1,20 @@
 <?php
 class Tools {
 	function __construct() {
-		$this->buff = [];
 	}
 	
-	public function TreeToPlain($tree, &$output){
+	public function TreeToPlain($tree, $line, &$output){
 		if (is_array($tree)) {
-			$mem = $this->buff;
+			$mem = $line;
 			foreach ($tree as $key => $value) {
-				$this->buff = $mem;
-				$this->buff[] = $key;
-				$this->TreeToPlain($tree[$key], $output);
+				$line = $mem;
+				$line[] = $key;
+				$this->TreeToPlain($tree[$key], $line, $output);
 			}
-			$this->buff = $mem;
+			$line = $mem;
 		} else {
 			$output[] = [
-				'tags' => $this->buff,
+				'tags' => $line,
 				'value' => $tree[0]
 			];
 			return null;

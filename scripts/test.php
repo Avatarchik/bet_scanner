@@ -13,9 +13,9 @@ class Test {
 
 	}
 
-	public function ToolsTest() {
+	public function ToolsTest($arr) {
 		$output = [];
-		$this->tools->TreeToPlain($arr, $output);
+		$this->tools->TreeToPlain($arr, [], $output);
 		print_r($output);
 
 		print("\nOK\n");
@@ -39,7 +39,7 @@ $params = [
 	'pass' => 'root',
 	'charset' => 'utf8'
 ];
-$test->DBTest($params);
+//$test->DBTest($params);
 
 // --------- Tools test
 $arr = [
