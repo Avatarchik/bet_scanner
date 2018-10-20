@@ -1,15 +1,17 @@
 <?php
-require('config/config.php'); 
-require('scripts/modules/HTTP.php'); 
-require('scripts/modules/DB.php'); 
-require('scripts/modules/Tools.php'); 
-require('scripts/modules/Errors.php'); 
+require('config/config.php');
+require('scripts/modules/HTTP.php');
+require('scripts/modules/DB.php');
+require('scripts/modules/Tools.php');
+require('scripts/modules/Errors.php');
 
 class Scanner {
 	function __construct() {
 		$this->http = new HTTP();
+		$this->db = new DB();
+
 	}
-	
+
 	public function Run() {
 		$data = [];
 		$bet_sites = json_decode(BET_SITES, true);
@@ -30,21 +32,29 @@ class Scanner {
 				$site_data[] = [
 					$link_type => [
 						'content' => $content
-					]  
+					]
 				];
 			}
 			$data[] = [
 				$name => $site_data
 			];
 		}
-			
-		
+
+
 		print_r($data);
 		// print(getcwd() . "\n");
 		print("\nOK\n");
 	}
+	public function test($params) {
+		$this->db->connect_db($params);
+	}
 }
 
 $scanner = new Scanner();
-$scanner->Run();
 
+$params = [
+
+	'host' => '127',
+];
+$scanner->test($params);
+//$scanner->Run();
