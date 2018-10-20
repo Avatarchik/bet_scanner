@@ -15,7 +15,7 @@ class Test {
 
 	public function ToolsTest($arr) {
 		$output = [];
-		$this->tools->TreeToPlain($arr, [], $output);
+		$this->tools->TreeToPlain($arr, $output);
 		print_r($output);
 
 		print("\nOK\n");
