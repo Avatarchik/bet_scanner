@@ -9,6 +9,7 @@ class Scanner {
 	function __construct() {
 		$this->http = new HTTP();
 		$this->db = new DB();
+		$this->tools = new Tools();
 
 	}
 
@@ -45,8 +46,14 @@ class Scanner {
 		// print(getcwd() . "\n");
 		print("\nOK\n");
 	}
-	public function test($params) {
-		$this->db->connect_db($params);
+
+
+public function test($arr) {
+	//	$this->db->connect_db($params);
+	$line = '';
+	$line = $this->tools->tree_plaine($arr, $line);
+	return $line;
+
 	}
 }
 
@@ -54,7 +61,19 @@ $scanner = new Scanner();
 
 $params = [
 
-	'host' => '127',
+	'host' => '127.0.0.1',
+	'db' => 'testdb',
+	'usr' => 'root',
+	'pass' => 'root',
+	'charset' => 'utf8'
 ];
-$scanner->test($params);
+$arr = [
+	'one' => [
+		'one_one' => '1',
+		'one_two' => '2',
+	],
+	'three' => '3'
+];
+$scanner->test($arr);
+
 //$scanner->Run();
