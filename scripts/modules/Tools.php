@@ -15,9 +15,20 @@ class Tools {
 		} else {
 			$output[] = [
 				'tags' => $buff,
-				'value' => $tree[0]
+				'value' =>  $tree
 			];
 		}
 	}
+	
+	public function PlainToCSV($data){
+		$content = '';
+		foreach ($data as $rec) {
+			$line = implode(',', $rec['tags']) . ',:' . $rec['value'] . "\n";
+			$content .= $line;
+		}
+		return $content;
+	}
+	
+	
 
 }
