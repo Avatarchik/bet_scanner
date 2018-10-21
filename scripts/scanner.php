@@ -4,7 +4,7 @@ require('scripts/modules/HTTP.php');
 require('scripts/modules/DB.php');
 require('scripts/modules/Tools.php');
 require('scripts/modules/Errors.php');
-require('scripts/modules/Parsers.php');
+require('scripts/modules/Parser.php');
 
 class Scanner {
 	function __construct() {
@@ -12,7 +12,9 @@ class Scanner {
 		$this->db = new DB();
 		$this->tools = new Tools();
 		$this->errors = new Errors();
-		$this->parsers = new Parsers();
+		$this->parser = new Parser();
+		
+		date_default_timezone_set('Asia/Karachi');
 	}
 
 	public function Run() {
@@ -33,7 +35,7 @@ class Scanner {
 				$link_type = $link['type'];
 				$params = $link['params'];
 				$content = $this->http->GetLinkContent($params);
-				$content = $this->parsers->ParseContent($content, $params);
+				$content = $this->parser->ParseContent($content, $params);
 				$site_data[] = [
 					$link_type => [
 						'content' => $content
