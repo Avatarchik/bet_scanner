@@ -64,9 +64,9 @@ class Parsers {
 									];
 								}
 							} else {
-								//error: invalid FonbetLink content[\'sport\']'
-								print('error: invalid non unic id into sport[\'kind\']=\'segment\'' . "\n");
-								return null;
+								//error: non unic id into sport[\'kind\']=\'segment\''
+								print('error: non unic id into sport[\'kind\']=\'segment\'' . "\n");
+								return [];
 							}
 						}
 					}
@@ -77,9 +77,9 @@ class Parsers {
 					];
 					
 				} else {
-					//error: invalid FonbetLink content[\'sport\']'
-					print('error: invalid non unic id into sport[\'kind\']=\'sport\'' . "\n");
-					return null;
+					//error: non unic id into sport[\'kind\']=\'sport\''
+					print('error: non unic id into sport[\'kind\']=\'sport\'' . "\n");
+					return [];
 				}
 			}
 		}
@@ -88,8 +88,6 @@ class Parsers {
 		$eventBlocks = $content['eventBlocks'];
 		$customFactors = $content['customFactors'];
 		
-		
-		print_r($data);
 		return $data;
 	}
 	
