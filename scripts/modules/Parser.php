@@ -66,40 +66,41 @@ class Parser {
 			return false;
 		}
 		
+		
+		$all_event_keys = [];
 		$events = $content['events'];
 		foreach ($data['sports'] as &$sport) {
+			$all_event_keys[$sport['name']] = []; ////
+			$unic_event_keys = []; /////
 			foreach ($sport['segments'] as &$segment) {
 				foreach ($events as $event) {
 					if ($event['sportId'] == $segment['id']) {
 						$segment['events'][] = [
 							'id' => $event['id'],
 							'sportId' => $event['sportId'],
-							'startTime' => date('D, d F Y H:i:s', $event['startTime']),
+							'startTime' => date('D, d F Y, H:i:s', $event['startTime']),
 						];
+						
+						foreach ($event as $key=>$value) { ////
+							if ($this->_itemIsUnic($key, $unic_event_keys)) { ////
+								$all_event_keys[$sport['name']][] = $key; /////
+							} ////
+						} ////
 					}
 				}
 				
 				//print($segment['id'] . "\n");
 			}
-			
+			sort($all_event_keys[$sport['name']]); ////
 		}
+		print_r($all_event_keys);
 		
 		return true;
 	}
 	
 	private function _parseFonbetLink($content) {
- 		// foreach ($content as $key=>$item) {
-			// print_r($key . "\n");
-		// }
-		
-		/*$unic_items = [];
 
-		if (!isset($content['events'])) {
-			//error: invalid FonbetLink content[\'sport\']'
-			print('error: invalid FonbetLink content[\'events\']' . "\n");
-			return null;
-		}
-		if (!isset($content['eventBlocks'])) {
+		/*if (!isset($content['eventBlocks'])) {
 			//error: invalid FonbetLink content[\'sport\']'
 			print('error: invalid FonbetLink content[\'eventBlocks\']' . "\n");
 			return null;
@@ -108,14 +109,12 @@ class Parser {
 			//error: invalid FonbetLink content[\'sport\']'
 			print('error: invalid FonbetLink content[\'customFactors\']' . "\n");
 			return null;
-		}
+		}*/
 		
+		// $eventBlocks = $content['eventBlocks'];
+		// $customFactors = $content['customFactors'];*/
 		
-		$events = $content['events'];
-		$eventBlocks = $content['eventBlocks'];
-		$customFactors = $content['customFactors'];*/
 		$data = [];
-		
 		if ($this->_fillSports($data, $content)) {
 			if ($this->_fillEvents($data, $content)) {
 				return $data;
