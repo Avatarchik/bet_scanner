@@ -39,16 +39,15 @@ class HTTP {
 		$content = [];
 		
 		$response = $this->_request($params['request']);
-
-		if ($params['response']['type'] == 'json') {
-			$response['content'] = json_decode($response['content'], true);
+		
+		if ($response['errno'] != 0) {
+			//error: site request error
+			print('error: site' . $params['url'] . 'request error:' . $response['errmsg'] . "\n");
+			return [];
 		}
 		
-		if ($response['errno'] == 0) {
-			$content = $response['content'];
-		} else {
-			//error: site_request_error
-			print('site' . $params['url'] . 'request_error' . "\n");
+		if ($params['response']['type'] == 'json') {
+			$content = json_decode($response['content'], true);
 		}
 
 		return $content;
