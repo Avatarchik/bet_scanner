@@ -38,7 +38,7 @@ class Parser {
 							} else {
 								//error: non unic id into sport[\'kind\']=\'segment\''
 								print('error: non unic id into sport[\'kind\']=\'segment\'' . "\n");
-								return [];
+								return false;
 							}
 						}
 					}
@@ -51,7 +51,7 @@ class Parser {
 				} else {
 					//error: non unic id into sport[\'kind\']=\'sport\''
 					print('error: non unic id into sport[\'kind\']=\'sport\'' . "\n");
-					return [];
+					return false;;
 				}
 			}
 		}
@@ -68,32 +68,46 @@ class Parser {
 		
 		
 		$all_event_keys = [];
-		$events = $content['events'];
+		$master_events = $content['events'];
+		$slave_events = $content['events'];
 		foreach ($data['sports'] as &$sport) {
-			$all_event_keys[$sport['name']] = []; ////
-			$unic_event_keys = []; /////
+			// $all_event_keys[$sport['name']] = []; ////
+			// $unic_event_keys = []; /////
 			foreach ($sport['segments'] as &$segment) {
-				foreach ($events as $event) {
-					if ($event['sportId'] == $segment['id']) {
-						$segment['events'][] = [
-							'id' => $event['id'],
-							'sportId' => $event['sportId'],
-							'startTime' => date('D, d F Y, H:i:s', $event['startTime']),
-						];
-						
-						foreach ($event as $key=>$value) { ////
-							if ($this->_itemIsUnic($key, $unic_event_keys)) { ////
-								$all_event_keys[$sport['name']][] = $key; /////
-							} ////
-						} ////
+				foreach ($master_events as $master_event) {
+					if ($master_event['sportId'] == $segment['id']) {
+						if (!isset($master_event['parentId'])) {
+							$events = [];
+							foreach ($slave_events as $slave_event) {
+								if (isset($slave_event['parentId']) && $slave_event['parentId'] == $master_event['id']) {
+									$events[] =  [
+										'id' => $slave_event['id'],
+										'sportId' => $slave_event['sportId'],
+										'parentId' => $slave_event['parentId'],
+										'startTime' => date('D, d F Y, H:i:s', $slave_event['startTime']),
+									];
+								}
+							}
+							$segment['events'][] = [
+								'id' => $master_event['id'],
+								'sportId' => $master_event['sportId'],
+								'startTime' => date('D, d F Y, H:i:s', $master_event['startTime']),
+								'events' => $events
+							];
+						}
+						// foreach ($event as $key=>$value) { ////
+							// if ($this->_itemIsUnic($key, $unic_event_keys)) { ////
+								// $all_event_keys[$sport['name']][] = $key; /////
+							// } ////
+						// } ////
 					}
 				}
 				
 				//print($segment['id'] . "\n");
 			}
-			sort($all_event_keys[$sport['name']]); ////
+			// sort($all_event_keys[$sport['name']]); ////
 		}
-		print_r($all_event_keys);
+		// print_r($all_event_keys); ////
 		
 		return true;
 	}
