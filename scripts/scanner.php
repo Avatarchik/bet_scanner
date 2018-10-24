@@ -47,10 +47,10 @@ class Scanner {
 			];
 		}
 		
-		$plain_data = [];
-		$this->tools->TreeToPlain($data, $plain_data);
-		$file_content = $this->tools->PlainToCSV($plain_data);
-		file_put_contents('data/test.txt', $file_content);
+		// $plain_data = [];
+		// $this->tools->TreeToPlain($data, $plain_data);
+		// $file_content = $this->tools->PlainToCSV($plain_data);
+		// file_put_contents('data/test.txt', $file_content);
 		
 		$file_content = json_encode($data, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 		file_put_contents('data/test.json', $file_content);
