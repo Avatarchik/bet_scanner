@@ -26,8 +26,8 @@ class Test {
 	}
 
 	
-	public function TreeToPlain($tree, &$plain, $parent_id=null) {
-		foreach ($tree as $item) {
+	public function TreeToPlain(&$tree, &$plain, $parent_id=null) {
+		foreach ($tree as &$item) {
 			$plain[] = [
 				'id' => $item['id'],
 				'parent_id' => $parent_id,
@@ -39,10 +39,18 @@ class Test {
 		}
 	}
 	
-	public function PlainToTree($plain, &$tree) {
-		foreach ($plain as $item) {
-			
+	public function PlainToTree(&$plain, $id=null) {
+		$tree = null;
+		foreach ($plain as &$item) {
+			if (!(isset($id) || isset($item['parent_id'])) || $item['parent_id'] == $id) { 
+				$tree[] = [
+					'id' => $item['id'],
+					'num' => $item['num'],
+					'tree' => $this->PlainToTree($plain, $item['id'])
+				];
+			}
 		}
+		return $tree;
 	}
 	
 }
@@ -120,10 +128,9 @@ $tree = [
 
 $plain = [];
 
-$test-> TreeToPlain($tree, $plain);
+$test->TreeToPlain($tree, $plain);
 // print_r($plain);
  
-$tree = [];
-$test-> PlainToTree($plain, $tree);
+$tree = $test->PlainToTree($plain);
 print_r($tree);
 
