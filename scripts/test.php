@@ -26,17 +26,24 @@ class Test {
 	}
 
 	
-	public function TreeToPlain($tree, &$plain) {
-		if (is_array($tree)) {
-			foreach ($tree as $item) {
-				$this->TreeToPlain()
-			}
-		} else {
-			print_r($tree);
+	public function TreeToPlain($tree, &$plain, $parent_id=null) {
+		foreach ($tree as $item) {
+			$plain[] = [
+				'id' => $item['id'],
+				'parent_id' => $parent_id,
+				'num' => $item['num']
+			];
+			if (isset($item['tree'])) {
+				$this->TreeToPlain($item['tree'], $plain, $item['id']);
+			}	
 		}
-		print_r($tree);
 	}
 	
+	public function PlainToTree($plain, &$tree) {
+		foreach ($plain as $item) {
+			
+		}
+	}
 	
 }
 
@@ -63,56 +70,60 @@ $arr = [
 // $test->ToolsTest($arr);
 
 $tree = [
-	'tree' => [	
-		[
-			'id' => 1,
-			'num' => '1',
-			'tree' => [
-				[
-					'id' => 4,
-					'num' => '1.1'
-				],
-				[
-					'id' => 5,
-					'num' => '1.2'
-				],
-				[
-					'id' => 6,
-					'num' => '1.3',
-					'tree' => [
-						[
-							'id' => 9,
-							'num' => '1.3.1'
-						],
-						[
-							'id' => 10,
-							'num' => '1.3.2'
-						]
+	[
+		'id' => 1,
+		'num' => '1',
+		'tree' => [
+			[
+				'id' => 4,
+				'num' => '1.1'
+			],
+			[
+				'id' => 5,
+				'num' => '1.2'
+			],
+			[
+				'id' => 6,
+				'num' => '1.3',
+				'tree' => [
+					[
+						'id' => 9,
+						'num' => '1.3.1'
+					],
+					[
+						'id' => 10,
+						'num' => '1.3.2'
 					]
 				]
 			]
-		],
-		[
-			'id' => 2,
-			'num' => "2",
-			'tree' => [
-				[
-					'id' => 7,
-					'num' => '2.1'
-				],
-				[
-					'id' => 8,
-					'num' => '2.2'
-				]
-			]
-		],
-		[
-			'id' => 3,
-			'num' => "3",
 		]
+	],
+	[
+		'id' => 2,
+		'num' => "2",
+		'tree' => [
+			[
+				'id' => 7,
+				'num' => '2.1'
+			],
+			[
+				'id' => 8,
+				'num' => '2.2'
+			]
+		]
+	],
+	[
+		'id' => 3,
+		'num' => "3",
 	]
 ];
 
 $plain = [];
 
 $test-> TreeToPlain($tree, $plain);
+// print_r($plain);
+ 
+$tree = [];
+$test-> PlainToTree($plain, $tree);
+print_r($tree);
+
