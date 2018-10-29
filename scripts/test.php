@@ -26,6 +26,17 @@ class Test {
 	}
 
 	
+	public function TreeToPlain($tree, &$plain) {
+		if (is_array($tree)) {
+			foreach ($tree as $item) {
+				$this->TreeToPlain()
+			}
+		} else {
+			print_r($tree);
+		}
+		print_r($tree);
+	}
+	
 	
 }
 
@@ -49,4 +60,59 @@ $arr = [
 	],
 	'three' => '3'
 ];
-$test->ToolsTest($arr);
+// $test->ToolsTest($arr);
+
+$tree = [
+	'tree' => [	
+		[
+			'id' => 1,
+			'num' => '1',
+			'tree' => [
+				[
+					'id' => 4,
+					'num' => '1.1'
+				],
+				[
+					'id' => 5,
+					'num' => '1.2'
+				],
+				[
+					'id' => 6,
+					'num' => '1.3',
+					'tree' => [
+						[
+							'id' => 9,
+							'num' => '1.3.1'
+						],
+						[
+							'id' => 10,
+							'num' => '1.3.2'
+						]
+					]
+				]
+			]
+		],
+		[
+			'id' => 2,
+			'num' => "2",
+			'tree' => [
+				[
+					'id' => 7,
+					'num' => '2.1'
+				],
+				[
+					'id' => 8,
+					'num' => '2.2'
+				]
+			]
+		],
+		[
+			'id' => 3,
+			'num' => "3",
+		]
+	]
+];
+
+$plain = [];
+
+$test-> TreeToPlain($tree, $plain);
