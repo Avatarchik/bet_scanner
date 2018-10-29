@@ -1,6 +1,16 @@
 <?php
 class Parser {
-	
+	function __construct() {
+		$this->sport_index_by_id = [];
+		$this->segment_index_by_id = [];
+		$this->m_events_index_by_id = [];
+		$this->s_events_index_by_id = [];
+		
+		$this->sport_index_by_segment_index = [];
+		$this->segment_index_by_m_events_index = [];
+		$this->m_events_index_by_s_events_index = [];
+		
+	}
 	
 	private function _itemIsUnic($item, &$unic_items) {
 		if (!in_array($item, $unic_items)) {
@@ -10,7 +20,7 @@ class Parser {
 		return false;
 	}
 	
-	private function _fillSports(&$data, $content) {
+	private function _fillSportsBkp(&$data, $content) {
 		if (!isset($content['sports'])) {
 			//error: invalid FonbetLink content[\'sport\']'
 			print('error: invalid FonbetLink content[\'sports\']' . "\n");
@@ -46,7 +56,7 @@ class Parser {
 		return true;
 	}
 	
-	private function _fillEvents(&$data, $content) {
+	private function _fillEventsBkp(&$data, $content) {
 		if (!isset($content['events'])) {
 			//error: invalid FonbetLink content[\'sport\']'
 			print('error: invalid FonbetLink content[\'events\']' . "\n");
@@ -67,6 +77,9 @@ class Parser {
 										'id' => $slave_event['id'],
 										'sportId' => $slave_event['sportId'],
 										'parentId' => $slave_event['parentId'],
+										
+										
+										
 										'startTime' => date('D, d F Y, H:i:s', $slave_event['startTime']),
 									];
 								}
@@ -75,6 +88,8 @@ class Parser {
 								'id' => $master_event['id'],
 								'sportId' => $master_event['sportId'],
 								'startTime' => date('D, d F Y, H:i:s', $master_event['startTime']),
+								'team1' => $master_event['team1'] ?? null,
+								'team2' => $master_event['team2'] ?? null,
 								'events' => $events
 							];
 						}
@@ -122,6 +137,110 @@ class Parser {
 	}
 	
 	
+	private function _fillSports(&$data, $content) {
+		if (!isset($content['sports'])) {
+			//error: invalid FonbetLink content[\'sport\']'
+			print('error: invalid FonbetLink content[\'sports\']' . "\n");
+			return false;
+		}
+	
+		$this->sport_index_by_id = [];
+		$this->segment_index_by_id = [];
+		$this->sport_index_by_segment_index  = [];
+		
+		$sports = $content['sports'];
+		foreach ($sports as $_index=>$sport) {
+			if ($sport['kind'] == 'sport') {
+				$this->sport_index_by_id[$sport['id']] = $_index;
+				
+				$data['sports'][$_index] = [
+					'id' => $sport['id'],
+					'_index' => $_index,
+					'name' => $sport['name'],
+					'segments' => []
+				];
+			}
+		}	
+		
+		$sports = $content['sports'];
+		foreach ($sports as $_index=>$sport) {	
+			if ($sport['kind'] == 'segment') {
+				$sport_index = $this->sport_index_by_id[$sport['parentId']];
+				$this->segment_index_by_id[$sport['id']] = $_index;
+				$data['sports'][$sport_index]['segments'][$_index] = [
+					'id' => $sport['id'],
+					'_index' => $_index,
+					'parentId' => $sport['parentId'],
+					'name' => $sport['name'],
+					'events' => []
+				];
+				
+				$this->sport_index_by_segment_index[$_index] = $sport_index;
+			}
+		}
+
+		return true;
+	}
+	
+	private function _fillEvents(&$data, $content) {
+		if (!isset($content['events'])) {
+			//error: invalid FonbetLink content[\'sport\']'
+			print('error: invalid FonbetLink content[\'events\']' . "\n");
+			return false;
+		}
+		
+		$this->m_events_index_by_id = [];
+		$this->s_events_index_by_id = [];
+		$this->segment_index_by_m_events_index = [];
+		$this->m_events_index_by_s_events_index = [];
+		
+		$events = $content['events'];
+		foreach ($events as $_index=>$event) {
+			if (!isset($event['parentId'])) {
+				$segment_index = $this->segment_index_by_id[$event['sportId']];
+				$this->m_events_index_by_id[$event['id']] = $_index;
+				$sport_index = $this->sport_index_by_segment_index[$segment_index];
+				
+				$data['sports'][$sport_index]['segments'][$segment_index]['events'][$_index] = [
+					'id' => $event['id'],
+					'_index' => $_index,
+					'sportId' => $event['sportId'],
+					'startTime' => date('D, d F Y, H:i:s', $event['startTime']),
+					'team1' => $event['team1'],
+					'team2' => $event['team2'] ?? null,
+					'events' => []
+				];
+				
+				$this->segment_index_by_m_events_index[$_index] = $segment_index;
+			}
+		}
+		
+		
+		$events = $content['events'];
+		foreach ($events as $_index=>$event) {
+			if (isset($event['parentId'])) {
+				if (isset($this->m_events_index_by_id[$event['parentId']])) {
+					
+					$m_events_index = $this->m_events_index_by_id[$event['parentId']];
+					$this->s_events_index_by_id[$event['id']] = $_index;
+					$segment_index = $this->segment_index_by_m_events_index[$m_events_index];
+					$sport_index = $this->sport_index_by_segment_index[$segment_index];
+					
+					$data['sports'][$sport_index]['segments'][$segment_index]['events'][$m_events_index]['events'][] = [
+						'id' => $event['id'],
+						'_index' => $_index,
+						'parentId' => $event['parentId']
+											
+					];
+				} else {
+					print_r($event);
+				}
+					
+			}
+		}
+		
+		return true;
+	}
 	
 	private function _parseFonbetLink($content) {
 
@@ -138,9 +257,9 @@ class Parser {
 		$data = [];
 		if ($this->_fillSports($data, $content)) {
 			if ($this->_fillEvents($data, $content)) {
-				if ($this->_fill_customFactors($data, $content)) {
+				// if ($this->_fill_customFactors($data, $content)) {
 					return $data;
-				}
+				// }
 			}
 		}
 		
