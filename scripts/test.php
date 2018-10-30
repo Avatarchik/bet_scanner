@@ -26,33 +26,66 @@ class Test {
 	}
 
 	
-	public function TreeToPlain(&$tree, &$plain, $parent_id=null) {
+	public function TreeToFlatRef(&$tree, &$flat, $parent_id=null) {
 		foreach ($tree as &$item) {
-			$plain[] = [
+			$flat[] = [
 				'id' => $item['id'],
 				'parent_id' => $parent_id,
 				'num' => $item['num']
 			];
 			if (isset($item['tree'])) {
-				$this->TreeToPlain($item['tree'], $plain, $item['id']);
+				$this->TreeToFlatRef($item['tree'], $flat, $item['id']);
 			}	
 		}
 	}
 	
-	public function PlainToTree(&$plain, $id=null) {
-		$tree = null;
-		foreach ($plain as &$item) {
+	public function FlatToTreeRef(&$flat, &$tree, $id=null) {
+		$k = 0;
+		foreach ($flat as &$item) {
 			if (!(isset($id) || isset($item['parent_id'])) || $item['parent_id'] == $id) { 
 				$tree[] = [
 					'id' => $item['id'],
 					'num' => $item['num'],
-					'tree' => $this->PlainToTree($plain, $item['id'])
+					'tree' => null
+				];
+				$this->FlatToTreeRef($flat, $tree[$k]['tree'], $item['id']);
+				$k += 1;
+			}
+		}
+	}
+	
+	public function TreeToFlat(&$tree, $parent_id=null) {
+		foreach ($tree as &$item) {
+			$flat[] = [
+				'id' => $item['id'],
+				'parent_id' => $parent_id,
+				'num' => $item['num']
+			];
+			if (isset($item['tree'])) {
+				$leaves = $this->TreeToFlat($item['tree'], $item['id']);
+				foreach ($leaves as $leaf) {
+					$flat[] = $leaf;			
+				}
+			}	
+		}
+		return $flat;
+	}
+	
+	public function FlatToTree(&$flat, $id=null) {
+		$tree = null;
+		foreach ($flat as &$item) {
+			if (!(isset($id) || isset($item['parent_id'])) || $item['parent_id'] == $id) { 
+				$tree[] = [
+					'id' => $item['id'],
+					'num' => $item['num'],
+					'tree' => $this->FlatToTree($flat, $item['id'])
 				];
 			}
 		}
 		return $tree;
 	}
 	
+
 }
 
 $test = new Test();
@@ -126,11 +159,16 @@ $tree = [
 	]
 ];
 
-$plain = [];
+$flat = $test->TreeToFlat($tree);
+// print_r($flat);
+$tree = $test->FlatToTree($flat);
+// print_r($tree);
 
-$test->TreeToPlain($tree, $plain);
-// print_r($plain);
- 
-$tree = $test->PlainToTree($plain);
+$flat = [];
+$test->TreeToFlatRef($tree, $flat);
+// print_r($flat);
+$tree = [];
+$test->FlatToTreeRef($flat, $tree);
 print_r($tree);
+
 
