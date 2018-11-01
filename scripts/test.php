@@ -95,11 +95,18 @@ class Test {
 		return $tree;
 	}
 	
-	public function GetByLtree($ltree, $child_key) {
-		$path = explode('.', $ltree);
-		foreach () {
+	public function GetByLtree($tree, $ltree, $child_key) {
+		$k = $ltree[0];
+		
+		if (count($ltree) > 2) {
+			$tree = $tree[$k];
+			unset($ltree[0]);
 			
+			// $tree = $this->GetByLtree($tree[$child_key], $ltree, $child_key);
+		} else if (count($ltree) == 2) {
+			// return $tree[$k];
 		}
+		// return $tree;
 	}
 
 	public function SetByLtree($ltree, $child_key) {
@@ -175,8 +182,12 @@ $flat = $test->TreeToFlat($tree, 'tree', 'parent_id', 'id');
 // print_r($flat);
 $ltree_by_id = [];
 $tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id', $ltree_by_id);
-print_r($ltree_by_id);
-print_r($tree);
+// print_r($ltree_by_id);
+// print_r($tree);
+
+
+$l = $test->GetByLtree($tree, array(0,2,1), 'events');
+print_r($l);
 
 // $flat = [];
 // $test->TreeToFlatRef($tree, $flat);
