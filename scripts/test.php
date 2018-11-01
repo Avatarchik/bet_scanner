@@ -67,8 +67,9 @@ class Test {
 		return $flat;
 	}
 	
-	public function FlatToTree(&$flat, $childe_key, $parent_index, $index, $id=null) {
+	public function FlatToTree(&$flat, $childe_key, $parent_index, $index, &$ltree_by_index, $id=null, $path=[], $layer=0) {
 		$tree = null;
+		$cnt = 0;
 		foreach ($flat as &$item) {
 			if (!(isset($id) || isset($item[$parent_index])) || $item[$parent_index] == $id) { 
 				$branch = [];
@@ -78,14 +79,31 @@ class Test {
 					}
 				}
 				
-				$childe = $this->FlatToTree($flat, $childe_key, $parent_index, $index, $item[$index]);
+				$path[$layer] = $cnt;
+				$ltree_by_index[$item[$index]] = implode('.', $path);
+				
+				$childe = $this->FlatToTree($flat, $childe_key, $parent_index, $index, $ltree_by_index, $item[$index], $path, $layer+1);
 				if (isset($childe)) {	
 					$branch[$childe_key] = $childe;
 				}
 				$tree[] = $branch;
+				
+				unset($path[$layer]);
+				$cnt += 1;
 			}
 		}
 		return $tree;
+	}
+	
+	public function GetByLtree($ltree, $child_key) {
+		$path = explode('.', $ltree);
+		foreach () {
+			
+		}
+	}
+
+	public function SetByLtree($ltree, $child_key) {
+		$path = explode('.', $ltree);
 	}
 	
 
@@ -155,7 +173,9 @@ $tree = [
 
 $flat = $test->TreeToFlat($tree, 'tree', 'parent_id', 'id');
 // print_r($flat);
-$tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id');
+$ltree_by_id = [];
+$tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id', $ltree_by_id);
+print_r($ltree_by_id);
 print_r($tree);
 
 // $flat = [];
