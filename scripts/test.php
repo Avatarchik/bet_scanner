@@ -80,7 +80,7 @@ class Test {
 				}
 				
 				$path[$layer] = $cnt;
-				$ltree_by_index[$item[$index]] = implode('.', $path);
+				$ltree_by_index[$item[$index]] = $path;
 				
 				$childe = $this->FlatToTree($flat, $childe_key, $parent_index, $index, $ltree_by_index, $item[$index], $path, $layer+1);
 				if (isset($childe)) {	
@@ -95,22 +95,35 @@ class Test {
 		return $tree;
 	}
 	
-	public function GetByLtree($tree, $ltree, $child_key) {
+	public function GetByLtree(&$tree, $ltree, $child_key) {
+		$l = null;
 		$k = $ltree[0];
-		
-		if (count($ltree) > 2) {
-			$tree = $tree[$k];
-			unset($ltree[0]);
+		if (count($ltree) > 1) {
+			for ($i=0; $i<count($ltree)-1; $i++) {
+				$ltree[$i] = $ltree[$i + 1];
+			}
+			unset($ltree[$i]);
 			
-			// $tree = $this->GetByLtree($tree[$child_key], $ltree, $child_key);
-		} else if (count($ltree) == 2) {
-			// return $tree[$k];
+			$l = $this->GetByLtree($tree[$k][$child_key], $ltree, $child_key);
+		} else if (count($ltree) == 1) {
+			return $tree[$k];
 		}
-		// return $tree;
+		return $l;
 	}
 
-	public function SetByLtree($ltree, $child_key) {
-		$path = explode('.', $ltree);
+	public function SetByLtree(&$tree, $ltree, $child_key, $set_key, $value) {
+		$l = null;
+		$k = $ltree[0];
+		if (count($ltree) > 1) {
+			for ($i=0; $i<count($ltree)-1; $i++) {
+				$ltree[$i] = $ltree[$i + 1];
+			}
+			unset($ltree[$i]);
+			
+			$this->SetByLtree($tree[$k][$child_key], $ltree, $child_key, $set_key, $value);
+		} else if (count($ltree) == 1) {
+			$tree[$k][$set_key] = $value;
+		}
 	}
 	
 
@@ -186,6 +199,7 @@ $tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id', $ltree_by_id);
 // print_r($tree);
 
 
+$test->SetByLtree($tree, array(0,2,1), 'events', $set_key='KIRGUDU', $value='BAMBARBIA');
 $l = $test->GetByLtree($tree, array(0,2,1), 'events');
 print_r($l);
 
