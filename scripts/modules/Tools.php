@@ -3,6 +3,14 @@ class Tools {
 	function __construct() {
 	}
 	
+	public function ItemIsUnic($item, &$unic_items) {
+		if (!in_array($item, $unic_items)) {
+			$unic_items[] = $item;
+			return true;
+		}
+		return false;
+	}
+	
 	public function TreeToPlain($tree, &$output, $buff=[]) {
 		if (is_array($tree)) {
 			$mem = $buff;
@@ -56,7 +64,7 @@ class Tools {
 		$tree = null;
 		$cnt = 0;
 		foreach ($flat as &$item) {
-			if (!(isset($id) || isset($item[$parent_index])) || (isset($item[$parent_index] ) && $item[$parent_index] == $id)) { 
+			if (!(isset($id) || isset($item[$parent_index])) || (isset($item[$parent_index]) && $item[$parent_index] == $id)) { 
 				$branch = [];
 				foreach ($item as $key=>$value) {
 					if ($key != $parent_index) {	
@@ -108,6 +116,21 @@ class Tools {
 			$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
 		} else if (count($ltree) == 1) {
 			$tree[$k][$set_key] = $value;
+		}
+	}
+		
+	public function AppendByLtree($set_key, $value, &$tree, $ltree, $child_key) {
+		$l = null;
+		$k = $ltree[0];
+		if (count($ltree) > 1) {
+			for ($i=0; $i<count($ltree)-1; $i++) {
+				$ltree[$i] = $ltree[$i + 1];
+			}
+			unset($ltree[$i]);
+			
+			$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
+		} else if (count($ltree) == 1) {
+			$tree[$k][$set_key][] = $value;
 		}
 	}
 	

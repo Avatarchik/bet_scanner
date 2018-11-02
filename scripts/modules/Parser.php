@@ -6,43 +6,26 @@ class Parser {
 		$this->event_ltree_by_id = [];
 	}
 	
-	private function _itemIsUnic($item, &$unic_items) {
-		if (!in_array($item, $unic_items)) {
-			$unic_items[] = $item;
-			return true;
+	private function _fillSports(&$sports, &$events, &$custom_factors) {
+		foreach ($custom_factors as &$custom_factor) {
+			$event_id = $custom_factor['e'];
+			$event_ltree = $this->event_ltree_by_id[$event_id];
+			
+			$this->tools->AppendByLtree('customFactors', $custom_factor, $events, $event_ltree, 'events');
+			// $event_item = $this->tools->GetByLtree($events, $event_ltree, 'events');
+			// print_r($event_item);
 		}
-		return false;
-	}
-	
-	private function _fillSports(&$data, $content) {
-		$sports = $content['sports'];
-		$data = $this->tools->FlatToTree($sports, 'segments', 'parentId', 'id', $this->sport_ltree_by_id);
-		return true;
-	}
-	
-	private function _fillEvents(&$data, $content) {
-		$events = $content['events'];
-		$data = $this->tools->FlatToTree($events, 'events', 'parentId', 'id', $this->event_ltree_by_id);
-		return true;
-	}
-	
-	private function _fill_customFactors(&$data, $content) {
-		$custom_factors = $content['customFactors'];
-		
-		return true;
 	}
 	
 	private function _parseFonbetLink($content) {
-		$data = [];
-		// if ($this->_fillSports($data, $content)) {
-			if ($this->_fillEvents($data, $content)) {
-				// if ($this->_fill_customFactors($data, $content)) {
-					return $data;
-				// }
-			}
-		// }
+		$sports = $this->tools->FlatToTree($content['sports'], 'segments', 'parentId', 'id', $this->sport_ltree_by_id);
+		$events = $this->tools->FlatToTree($content['events'], 'events', 'parentId', 'id', $this->event_ltree_by_id);
+		$custom_factors = $content['customFactors'];
 		
-		return [];
+		$this->_fillSports($sports, $events, $custom_factors);
+		
+		// return $sports;
+		return $events;
 	}
 	
 	public function ParseContent($content, $params) {
