@@ -2,6 +2,7 @@
 class Parser {
 	function __construct() {
 		$this->tools = new Tools();
+		$this->sport_ltree_by_id = [];
 	}
 	
 	private function _itemIsUnic($item, &$unic_items) {
@@ -14,9 +15,7 @@ class Parser {
 	
 	private function _fillSports(&$data, $content) {
 		$sports = $content['sports'];
-		
-		// FlatToTree(&$flat, $childe_key, $parent_index, $index, &$ltree_by_index, $id=null, $path=[], $layer=0)
-		
+		$data = $this->tools->FlatToTree($sports, 'segments', 'parentId', 'id', $this->sport_ltree_by_id);
 		return true;
 	}
 	

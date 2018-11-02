@@ -37,7 +37,9 @@ class Tools {
 					$leaf[$key] = $value;
 				}
 			}
-			$leaf[$parent_index] = $parent_id;
+			if (isset($parent_id)) {	
+				$leaf[$parent_index] = $parent_id;
+			}
 			$flat[] = $leaf;
 			
 			if (isset($item[$childe_key])) {
@@ -54,7 +56,7 @@ class Tools {
 		$tree = null;
 		$cnt = 0;
 		foreach ($flat as &$item) {
-			if (!(isset($id) || isset($item[$parent_index])) || $item[$parent_index] == $id) { 
+			if (!(isset($id) || isset($item[$parent_index])) || (isset($item[$parent_index] ) && $item[$parent_index] == $id)) { 
 				$branch = [];
 				foreach ($item as $key=>$value) {
 					if ($key != $parent_index) {	

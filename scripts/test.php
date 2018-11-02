@@ -17,7 +17,6 @@ class Test {
 		$this->db->connect_db($params);
 	}
 
-	
 	public function TreeToFlatRef(&$tree, &$flat, $parent_id=null) {
 		foreach ($tree as &$item) {
 			$flat[] = [
@@ -54,7 +53,9 @@ class Test {
 					$leaf[$key] = $value;
 				}
 			}
-			$leaf[$parent_index] = $parent_id;
+			if (isset($parent_id)) {	
+				$leaf[$parent_index] = $parent_id;
+			}
 			$flat[] = $leaf;
 			
 			if (isset($item[$childe_key])) {
@@ -71,7 +72,7 @@ class Test {
 		$tree = null;
 		$cnt = 0;
 		foreach ($flat as &$item) {
-			if (!(isset($id) || isset($item[$parent_index])) || $item[$parent_index] == $id) { 
+			if (!(isset($id) || isset($item[$parent_index])) || (isset($item[$parent_index] ) && $item[$parent_index] == $id)) { 
 				$branch = [];
 				foreach ($item as $key=>$value) {
 					if ($key != $parent_index) {	
@@ -199,10 +200,11 @@ $tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id', $ltree_by_id);
 // print_r($tree);
 
 
-$test->SetByLtree('KIRGUDU', 'BAMBARBIA', $tree, array(0,2,1), 'events');
-$l = $test->GetByLtree($tree, array(0,2,1), 'events');
-print_r($l);
+// $test->SetByLtree('KIRGUDU', 'BAMBARBIA', $tree, array(0,2,1), 'events');
+// $l = $test->GetByLtree($tree, array(0,2,1), 'events');
+// print_r($l);
 
+////////////////////////////////////////
 // $flat = [];
 // $test->TreeToFlatRef($tree, $flat);
 // print_r($flat);
