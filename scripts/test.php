@@ -111,7 +111,7 @@ class Test {
 		return $l;
 	}
 
-	public function SetByLtree(&$tree, $ltree, $child_key, $set_key, $value) {
+	public function SetByLtree($set_key, $value, &$tree, $ltree, $child_key) {
 		$l = null;
 		$k = $ltree[0];
 		if (count($ltree) > 1) {
@@ -120,7 +120,7 @@ class Test {
 			}
 			unset($ltree[$i]);
 			
-			$this->SetByLtree($tree[$k][$child_key], $ltree, $child_key, $set_key, $value);
+			$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
 		} else if (count($ltree) == 1) {
 			$tree[$k][$set_key] = $value;
 		}
@@ -199,7 +199,7 @@ $tree = $test->FlatToTree($flat, 'events', 'parent_id', 'id', $ltree_by_id);
 // print_r($tree);
 
 
-$test->SetByLtree($tree, array(0,2,1), 'events', $set_key='KIRGUDU', $value='BAMBARBIA');
+$test->SetByLtree('KIRGUDU', 'BAMBARBIA', $tree, array(0,2,1), 'events');
 $l = $test->GetByLtree($tree, array(0,2,1), 'events');
 print_r($l);
 
