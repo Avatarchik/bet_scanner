@@ -113,7 +113,9 @@ class Tools {
 			}
 			unset($ltree[$i]);
 			
-			$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
+			if (isset($tree[$k][$child_key])) {
+				$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
+			}
 		} else if (count($ltree) == 1) {
 			$tree[$k][$set_key] = $value;
 		}
@@ -128,7 +130,9 @@ class Tools {
 			}
 			unset($ltree[$i]);
 			
-			$this->SetByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
+			if (isset($tree[$k][$child_key])) {
+				$this->AppendByLtree($set_key, $value, $tree[$k][$child_key], $ltree, $child_key);
+			}
 		} else if (count($ltree) == 1) {
 			$tree[$k][$set_key][] = $value;
 		}

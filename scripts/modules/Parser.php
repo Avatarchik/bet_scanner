@@ -6,14 +6,21 @@ class Parser {
 		$this->event_ltree_by_id = [];
 	}
 	
-	private function _fillSports(&$sports, &$events, &$custom_factors) {
+	private function _fillEvents(&$events, &$custom_factors) {
 		foreach ($custom_factors as &$custom_factor) {
 			$event_id = $custom_factor['e'];
 			$event_ltree = $this->event_ltree_by_id[$event_id];
 			
 			$this->tools->AppendByLtree('customFactors', $custom_factor, $events, $event_ltree, 'events');
-			// $event_item = $this->tools->GetByLtree($events, $event_ltree, 'events');
-			// print_r($event_item);
+		}
+	}
+	
+	private function _fillSports(&$sports, &$events) {
+		foreach ($events as &$event) {
+			$sport_id = $event['sportId'];
+			$sport_ltree = $this->sport_ltree_by_id[$sport_id];
+			
+			$this->tools->AppendByLtree('events', $event, $sports, $sport_ltree, 'segments');
 		}
 	}
 	
@@ -22,10 +29,11 @@ class Parser {
 		$events = $this->tools->FlatToTree($content['events'], 'events', 'parentId', 'id', $this->event_ltree_by_id);
 		$custom_factors = $content['customFactors'];
 		
-		$this->_fillSports($sports, $events, $custom_factors);
+		$this->_fillEvents($events, $custom_factors);
+		$this->_fillSports($sports, $events);
 		
-		// return $sports;
-		return $events;
+		return $sports;
+		// return $events;
 	}
 	
 	public function ParseContent($content, $params) {
