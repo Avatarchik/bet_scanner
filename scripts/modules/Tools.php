@@ -97,7 +97,9 @@ class Tools {
 			}
 			unset($ltree[$i]);
 			
-			$l = $this->GetByLtree($tree[$k][$child_key], $ltree, $child_key);
+			if (isset($tree[$k][$child_key])) {
+				$l = $this->GetByLtree($tree[$k][$child_key], $ltree, $child_key);
+			}
 		} else if (count($ltree) == 1) {
 			return $tree[$k];
 		}

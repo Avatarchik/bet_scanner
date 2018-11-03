@@ -34,16 +34,20 @@ class Scanner {
 			foreach ($links as $link) {
 				$link_type = $link['type'];
 				$params = $link['params'];
-				$content = $this->http->GetLinkContent($params);
-				$content = $this->parser->ParseContent($content, $params);
-				$site_data[] = [
-					$link_type => [
-						'content' => $content
-					]
+				$source_content = $this->http->GetLinkContent($params);
+				$tree_content = $this->parser->ParseContent($source_content, $params);
+				$site_data['_tree'][] = [
+					'link_type' => $link_type,
+					'content' => $tree_content
+				];
+				$site_data['_source'][] = [
+					'link_type' => $link_type,
+					'content' => $source_content
 				];
 			}
 			$data[] = [
-				$name => $site_data
+				'name' => $name,
+				'data' => $site_data
 			];
 		}
 		
@@ -52,9 +56,14 @@ class Scanner {
 		// $file_content = $this->tools->PlainToCSV($plain_data);
 		// file_put_contents('data/test.txt', $file_content);
 		
-		$file_content = json_encode($data, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
-		file_put_contents('data/test.json', $file_content);
-
+		foreach ($data as $site) {
+			$file_content = json_encode($site['data']['_source'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+			file_put_contents('data/' . $site['name'] . '_source.json', $file_content);
+			
+			$file_content = json_encode($site['data']['_tree'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+			file_put_contents('data/' . $site['name'] . '_tree.json', $file_content);
+		}
+		
 		print("\nOK\n");
 	}
 
