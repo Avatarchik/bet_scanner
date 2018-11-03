@@ -4,24 +4,6 @@ class Parser {
 		$this->tools = new Tools();
 	}
 	
-	private function _fillEvents(&$events, &$custom_factors, &$event_ltree_by_id) {
-		foreach ($custom_factors as &$custom_factor) {
-			$event_id = $custom_factor['e'];
-			$event_ltree = $event_ltree_by_id[$event_id];
-			
-			$this->tools->AppendByLtree('customFactors', $custom_factor, $events, $event_ltree, 'events');
-		}
-	}
-	
-	private function _fillSports(&$sports, &$events, &$sport_ltree_by_id) {
-		foreach ($events as &$event) {
-			$sport_id = $event['sportId'];
-			$sport_ltree = $sport_ltree_by_id[$sport_id];
-			
-			$this->tools->AppendByLtree('events', $event, $sports, $sport_ltree, 'segments');
-		}
-	}
-	
 	private function _parseFonbetLink($content) {
 		$sport_ltree_by_id = [];
 		$event_ltree_by_id = [];
@@ -29,8 +11,23 @@ class Parser {
 		$events = $this->tools->FlatToTree($content['events'], 'events', 'parentId', 'id', $event_ltree_by_id);
 		$custom_factors = $content['customFactors'];
 		
-		$this->_fillEvents($events, $custom_factors, $event_ltree_by_id);
-		$this->_fillSports($sports, $events, $sport_ltree_by_id);
+		//---------- fillEvents
+		foreach ($custom_factors as &$custom_factor) {
+			$event_id = $custom_factor['e'];
+			$event_ltree = $event_ltree_by_id[$event_id];
+			
+			$this->tools->AppendByLtree('customFactors', $custom_factor, $events, $event_ltree, 'events');
+		}
+		
+		//---------- fillSports
+		foreach ($events as &$event) {
+			$sport_id = $event['sportId'];
+			$sport_ltree = $sport_ltree_by_id[$sport_id];
+			
+			$this->tools->AppendByLtree('events', $event, $sports, $sport_ltree, 'segments');
+		}
+		
+
 		
 		return $sports;
 		// return $events;
