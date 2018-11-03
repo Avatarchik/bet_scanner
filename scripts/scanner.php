@@ -18,7 +18,7 @@ class Scanner {
 	}
 
 	public function Run() {
-		$data = [];
+		$sites = [];
 		$bet_sites = json_decode(BET_SITES, true);
 		$bookmakers = $bet_sites['bookmakers'];
 		if (!isset($bookmakers)) {
@@ -35,33 +35,36 @@ class Scanner {
 				$link_type = $link['type'];
 				$params = $link['params'];
 				$source_content = $this->http->GetLinkContent($params);
-				$tree_content = $this->parser->ParseContent($source_content, $params);
+				$parsed_content = $this->parser->ParseContent($source_content, $params);
+				
 				$site_data['_tree'][] = [
 					'link_type' => $link_type,
-					'content' => $tree_content
+					'content' => $parsed_content['tree']
+				];
+				$site_data['_tagged'][] = [
+					'link_type' => $link_type,
+					'content' => $parsed_content['tagged']
 				];
 				$site_data['_source'][] = [
 					'link_type' => $link_type,
 					'content' => $source_content
 				];
 			}
-			$data[] = [
+			$sites[] = [
 				'name' => $name,
 				'data' => $site_data
 			];
 		}
 		
-		// $plain_data = [];
-		// $this->tools->TreeToPlain($data, $plain_data);
-		// $file_content = $this->tools->PlainToCSV($plain_data);
-		// file_put_contents('data/test.txt', $file_content);
-		
-		foreach ($data as $site) {
+		foreach ($sites as $site) {
 			$file_content = json_encode($site['data']['_source'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 			file_put_contents('data/' . $site['name'] . '_source.json', $file_content);
 			
 			$file_content = json_encode($site['data']['_tree'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 			file_put_contents('data/' . $site['name'] . '_tree.json', $file_content);
+			
+			$file_content = json_encode($site['data']['_tagged'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+			file_put_contents('data/' . $site['name'] . '_tagged.json', $file_content);
 		}
 		
 		print("\nOK\n");

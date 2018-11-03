@@ -27,9 +27,12 @@ class Parser {
 			$this->tools->AppendByLtree('events', $event, $sports, $sport_ltree, 'segments');
 		}
 		
-
+		$tagged = [];
 		
-		return $sports;
+		return [
+			'tree' => $sports,
+			'tagged' => $tagged
+		];
 		// return $events;
 	}
 	
