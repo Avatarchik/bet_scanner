@@ -29,6 +29,8 @@ class Parser {
 		
 		$tagged = [];
 		
+		$this->tools->TreeToPlain($sports, $tagged);
+		
 		return [
 			'tree' => $sports,
 			'tagged' => $tagged

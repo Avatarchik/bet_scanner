@@ -11,7 +11,7 @@ class Tools {
 		return false;
 	}
 	
-	public function TreeToPlain($tree, &$output, $buff=[]) {
+	public function TreeToPlain(&$tree, &$output, $buff=[]) {
 		if (is_array($tree)) {
 			$mem = $buff;
 			foreach ($tree as $key => $value) {
