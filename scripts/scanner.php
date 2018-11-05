@@ -37,15 +37,15 @@ class Scanner {
 				$source_content = $this->http->GetLinkContent($params);
 				$parsed_content = $this->parser->ParseContent($source_content, $params);
 				
-				$site_data['_tree'][] = [
+				$site_data['_tree'] = [
 					'link_type' => $link_type,
 					'content' => $parsed_content['tree']
 				];
-				$site_data['_tagged'][] = [
+				$site_data['_tagged'] = [
 					'link_type' => $link_type,
 					'content' => $parsed_content['tagged']
 				];
-				$site_data['_source'][] = [
+				$site_data['_source'] = [
 					'link_type' => $link_type,
 					'content' => $source_content
 				];
@@ -63,7 +63,11 @@ class Scanner {
 			$file_content = json_encode($site['data']['_tree'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 			file_put_contents('data/' . $site['name'] . '_tree.json', $file_content);
 			
-			$file_content = json_encode($site['data']['_tagged'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+			// $file_content = json_encode($site['data']['_tagged'], JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+			$file_content = '';
+			foreach ($site['data']['_tagged']['content'] as $rec) {
+				$file_content .= implode(',', $rec['tags']) . ': ' . $rec['value'] . "\n";
+			}
 			file_put_contents('data/' . $site['name'] . '_tagged.json', $file_content);
 		}
 		
