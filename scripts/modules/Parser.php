@@ -27,9 +27,19 @@ class Parser {
 			$this->tools->AppendByLtree('events', $event, $sports, $sport_ltree, 'segments');
 		}
 		
-		$tagged = [];
 		
-		$this->tools->TreeToPlain($sports, $tagged);
+		//---------- fillTags
+		$tagged = [];
+		foreach ($custom_factors as &$custom_factor) {
+			$event_id = $custom_factor['e'];
+			$event_ltree = $event_ltree_by_id[$event_id];
+			// $event = $this->tools->GetByLtree($events, $event_ltree, 'events');
+			
+			$sport_id = $event['sportId'];
+			$sport_ltree = $sport_ltree_by_id[$sport_id];
+			// $sport = $this->tools->GetByLtree($sports, $sport_ltree, 'segments');
+			print_r($sport_ltree);
+		}
 		
 		return [
 			'tree' => $sports,
