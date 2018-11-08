@@ -140,6 +140,23 @@ class Tools {
 		}
 	}
 	
+	public function TagByLtree(&$tree, $ltree, $child_key) {
+		$l = null;
+		$k = $ltree[0];
+		if (count($ltree) > 1) {
+			for ($i=0; $i<count($ltree)-1; $i++) {
+				$ltree[$i] = $ltree[$i + 1];
+			}
+			unset($ltree[$i]);
+			
+			if (isset($tree[$k][$child_key])) {
+				$l = $this->GetByLtree($tree[$k][$child_key], $ltree, $child_key);
+			}
+		} else if (count($ltree) == 1) {
+			return $tree[$k]['team1'];
+		}
+		return $l['team1'];
+	}
 	
 
 }
